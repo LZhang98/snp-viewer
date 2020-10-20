@@ -1,0 +1,21 @@
+ALAA20-3_DNA366:
+number of snps added: 97711
+number of dupes removed: 150597
+BELA18-1_DNA57:
+number of snps added: 108045
+number of dupes removed: 164934
+BELA18-3_DNA58:
+number of snps added: 104492
+number of dupes removed: 160469
+BELA18-4_DNA59:
+number of snps added: 111516
+number of dupes removed: 168640
+BELC18-1_DNA127:
+number of snps added: 103669
+number of dupes removed: 159093
+BELC18-2_DNA128:
+number of snps added: 108776
+number of dupes removed: 164448
+BELC18-4_DNA129:
+number of snps added: 108652
+number of dupes removed: 165281
