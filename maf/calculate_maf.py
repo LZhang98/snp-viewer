@@ -32,20 +32,21 @@ def remove_prefix(my_string, prefix, suffix):
 
 # Get list of all filenames from Poplar VCF folder
 # BAR
-file_list = glob.glob("../PoplarVCFsAnnotated/*.filter.vcf")
+file_list = glob.glob("../../PoplarVCFsAnnotated/*.filter.vcf")
 # local test
 # file_list = glob.glob("../test_data/*.filter.vcf")
+print(file_list)
 
 for f in file_list:
     # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
-    individual = remove_prefix(f, '../PoplarVCFsAnnotated/', '.filter.vcf')
+    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
     for snp in data.keys():
         data[snp][individual] = 0
 
 for f in file_list:
 
     # extract individual name
-    individual = remove_prefix(f, '../PoplarVCFsAnnotated/', '.filter.vcf')
+    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
     # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
     print("reading "+individual)
     vcf_reader = vcf.Reader(open(f, 'r'))
@@ -101,8 +102,8 @@ writer.writerow(col_names)
 print(col_names)
 
 for f in file_list:
-    # individual = remove_prefix(f, '../PoplarVCFsAnnotated/', '.filter.vcf')
-    individual = remove_prefix(f, '../test_data/', '.filter.vcf')
+    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
+    # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
 
     row = [individual.split('_')[0]]
     for snp in index:
