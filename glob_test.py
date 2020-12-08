@@ -1,5 +1,4 @@
 import json
-import vcf
 import glob
 
 # Helper function to extract individual name from filepath
