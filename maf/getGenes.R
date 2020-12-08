@@ -1,0 +1,25 @@
+fullData <- read.csv('s4.csv')
+
+head(fullData)
+
+data <- fullData[,c(2,3,4,8,10)]
+head(data)
+
+filteredData <- data[data$Location == 'CDS-NS',]
+filteredData
+
+filteredData$SNP..v3. <- stringr::str_remove_all(filteredData$SNP..v3., '\t')
+filteredData
+
+filter <- filteredData$SNP..v2.2.
+paste(filter,collapse=",")
+
+filter2 <- filteredData$SNP..v3.
+filter2
+
+table <- matrix(1:86, nrow=43, ncol=2)
+for (i in 1:43) {
+    table[i, ] <- as.numeric(unlist(strsplit(filter2[i], '_')))
+}
+
+write.csv(table, 'snp_index.csv')

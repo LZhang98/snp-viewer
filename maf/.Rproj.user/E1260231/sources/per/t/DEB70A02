@@ -1,0 +1,26 @@
+{
+    "collab_server" : "",
+    "contents" : "",
+    "created" : 1607302595502.000,
+    "dirty" : false,
+    "encoding" : "UTF-8",
+    "folds" : "",
+    "hash" : "335125116",
+    "id" : "DEB70A02",
+    "lastKnownWriteTime" : 1607312537,
+    "last_content_update" : 1607312537504,
+    "path" : "~/University/BCB330/maf/getGenes.R",
+    "project_path" : "getGenes.R",
+    "properties" : {
+        "cursorPosition" : "25,0",
+        "scrollLine" : "0",
+        "tempName" : "Untitled1"
+    },
+    "read_only" : false,
+    "read_only_alternatives" : [
+    ],
+    "relative_order" : 1,
+    "source_on_save" : false,
+    "source_window" : "",
+    "type" : "r_source"
+}
