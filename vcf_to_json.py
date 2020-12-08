@@ -1,3 +1,16 @@
+"""
+In the specified directory, go through all .vcf files and extract annotated features
+of snps.
+
+Save these in a dictionary, with the primary key being the transcript ID.
+
+Load the dict into a json file for downstream processing.
+
+Input: Directory of vcf files
+
+Output: main_db.json
+"""
+
 import json
 import vcf
 import glob

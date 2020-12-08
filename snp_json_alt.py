@@ -1,6 +1,8 @@
 import json
 import vcf
+import glob
 
+# TODO: Generalize to any batch of VCFs
 individuals = [
     'ALAA20-3_DNA366',
     'BELA18-1_DNA57', 
@@ -10,6 +12,9 @@ individuals = [
     'BELC18-2_DNA128',
     'BELC18-4_DNA129'
 ]
+
+filelist = glob.glob("test_data/*.filter.vcf")
+print(filelist)
 
 data = {}
 
@@ -37,30 +42,30 @@ for individual in individuals:
             # 5. gene ID
             # 7. feature ID
             # 10. variant using HGVS notation
+            # 12. cDNA_position / cDNA_len
             if ('missense_variant' in fields[1]):
                 chrom = record.CHROM
-                if chrom not in curr_individual.keys():
-                    curr_individual[chrom] = {}
 
-                gene_name = fields[3]
+                transcript_id = fields[6]
                 entry = {
-                    'transcript_id': fields[6],
-                    'variant': fields[9],
-                    'individual': individual
+                    'var': fields[9],
+                    'individual': individual,
+                    'chrom': chrom,
+                    'length': fields[11]
                 }
 
-                if (gene_name not in curr_individual[chrom].keys()):
-                    curr_individual[chrom][gene_name] = [entry]
+                if (transcript_id not in curr_individual):
+                    curr_individual[transcript_id] = [entry]
                     total_count += 1
                 else:
-                    for snp in curr_individual[chrom][gene_name]:
-                        if snp['variant'] == entry['variant']:
+                    for snp in curr_individual[transcript_id]:
+                        if snp['var'] == entry['var']:
                             duplicate = True
                             num_duplicates += 1
                             break
                     
                     if not duplicate:
-                        curr_individual[chrom][gene_name].append(entry)
+                        curr_individual[transcript_id].append(entry)
                         total_count += 1
                 
                 if (total_count % 5000 == 0 and not duplicate):
@@ -75,16 +80,12 @@ for individual in individuals:
     print('number of dupes removed: '+str(num_duplicates))
 
     # Now combine curr_individual dict into data
-    for chrom in curr_individual.keys():
-        if chrom not in data.keys():
-            data[chrom] = {}
-        
-        for gene in curr_individual[chrom].keys():
-            if gene in data[chrom].keys():
-                data[chrom][gene].extend(curr_individual[chrom][gene])
-            else:
-                data[chrom][gene] = curr_individual[chrom][gene]
-    
+    for transcript in curr_individual.keys():
+        if transcript not in data:
+            data[transcript] = curr_individual[transcript]
+        else:
+            data[transcript].extend(curr_individual[transcript])
+
 print('dumping json')
 json.dump(data, destf, sort_keys=True, indent=2)
 destf.close()
