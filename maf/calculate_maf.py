@@ -1,27 +1,27 @@
 import csv
 import vcf
 import glob
+import sys
 
-# set bar or local ==============================================
+# set bar or local ============================================================
 
-# local machine
-(bar, local) = (False, True)
-
-# bar
-# (bar, local) = (True, False)
-
-if bar:
+# VIA COMMAND LINE ARGUMENT
+if sys.argv[1] == "bar":
     print("set bar config")
-elif local:
+    (bar, local) = (True, False)
+elif sys.argv[1] == "local":
     print("set local machine config")
+    (bar, local) = (False, True)
 
-# load index ===================================================
+# load index ==================================================================
 index = open("snp_index.csv", "r")
 
 reader = csv.reader(index)
 
 index = []
 
+# Load in Athena's CDS-NS loci and save them as a list of tuples for reference
+# Functions as index
 line_count = 0
 for row in reader:
     if line_count > 0:
@@ -30,12 +30,12 @@ for row in reader:
         index.append((chrom, pos))
     line_count += 1
 
+# Prep for data table
 data = {}
-
 for i in index:
     data[i] = {}
 
-# read VCFs ====================================================
+# read VCFs ===================================================================
 
 # Helper function to extract individual name from filepath
 def remove_prefix(my_string, prefix, suffix):
@@ -43,7 +43,7 @@ def remove_prefix(my_string, prefix, suffix):
     my_string = my_string.rstrip(suffix)
     return my_string
 
-# # Get list of all filenames from Poplar VCF folder
+# Get list of all filenames from Poplar VCF folder
 if bar:
     file_list = glob.glob("../../PoplarVCFsAnnotated/*.filter.vcf")
 elif local:
@@ -51,6 +51,7 @@ elif local:
 
 print(file_list)
 
+# Initialize array of 0s for classifying SNPs per locus per genotype
 for f in file_list:
 
     if local:
@@ -64,6 +65,7 @@ for f in file_list:
 total_files = len(file_list)
 num_files = 1
 
+# Start reading each file proper
 for f in file_list:
 
     # extract individual name
@@ -83,6 +85,11 @@ for f in file_list:
     num_hom_ref = 0
     num_hom_alt = 0
     num_het = 0
+
+    # for each record in the vcf:
+    # 1. Check that this line isn't a duplicate (check that the locus has been processed before)
+    # 2. Check that this locus is in our index of interest
+    # 3. Add its gt_type field (0, 1, 2) to our data table (while counting for testing purposes)
     for record in vcf_reader:
         chrom = record.CHROM
         pos = record.POS
@@ -101,6 +108,7 @@ for f in file_list:
                     data[snp][individual] = 2
         num_lines += 1
 
+        # Make sure the code isn't slowing down over time
         if num_lines % 10000 == 0:
             print("read " + str(num_lines) + " lines")
 
@@ -108,9 +116,11 @@ for f in file_list:
     print(num_hom_ref)
     print(num_het)
     print(num_hom_alt)
+    num_files += 1
 
-# process dict ==================================================
+# process dict =======================================================================
 
+# Write data table into CSV
 if bar:
     destf = open("bar_maf.csv", "w")
 elif local:
@@ -125,7 +135,6 @@ for i in index:
     col_names.append(str(i[0]).zfill(2) + '_' + str(i[1]))
 
 writer.writerow(col_names)
-print(col_names)
 
 for f in file_list:
     if local:
