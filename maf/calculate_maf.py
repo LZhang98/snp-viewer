@@ -2,6 +2,19 @@ import csv
 import vcf
 import glob
 
+# set bar or local ==============================================
+
+# local machine
+(bar, local) = (False, True)
+
+# bar
+# (bar, local) = (True, False)
+
+if bar:
+    print("set bar config")
+elif local:
+    print("set local machine config")
+
 # load index ===================================================
 index = open("snp_index.csv", "r")
 
@@ -30,25 +43,37 @@ def remove_prefix(my_string, prefix, suffix):
     my_string = my_string.rstrip(suffix)
     return my_string
 
-# Get list of all filenames from Poplar VCF folder
-# BAR
-file_list = glob.glob("../../PoplarVCFsAnnotated/*.filter.vcf")
-# local test
-# file_list = glob.glob("../test_data/*.filter.vcf")
+# # Get list of all filenames from Poplar VCF folder
+if bar:
+    file_list = glob.glob("../../PoplarVCFsAnnotated/*.filter.vcf")
+elif local:
+    file_list = glob.glob("../test_data/*.filter.vcf")
+
 print(file_list)
 
 for f in file_list:
-    # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
-    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
+
+    if local:
+        individual = remove_prefix(f, '../test_data/', '.filter.vcf')
+    elif bar:
+        individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
+
     for snp in data.keys():
         data[snp][individual] = 0
+
+total_files = len(file_list)
+num_files = 1
 
 for f in file_list:
 
     # extract individual name
-    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
-    # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
-    print("reading "+individual)
+    if local:
+        individual = remove_prefix(f, '../test_data/', '.filter.vcf')
+    elif bar:
+        individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
+
+    print("reading " + individual + " " + str(num_files) + "/" + str(total_files))
+
     vcf_reader = vcf.Reader(open(f, 'r'))
 
     num_hits = 0
@@ -86,10 +111,11 @@ for f in file_list:
 
 # process dict ==================================================
 
-# BAR
-destf = open("bar_maf.csv", "w")
-# local test
-# destf = open("local_maf.csv", "w")
+if bar:
+    destf = open("bar_maf.csv", "w")
+elif local:
+    destf = open("local_maf.csv", "w")
+
 writer = csv.writer(destf)
 
 print('writing file...')
@@ -102,8 +128,10 @@ writer.writerow(col_names)
 print(col_names)
 
 for f in file_list:
-    individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
-    # individual = remove_prefix(f, '../test_data/', '.filter.vcf')
+    if local:
+        individual = remove_prefix(f, '../test_data/', '.filter.vcf')
+    elif bar:
+        individual = remove_prefix(f, '../../PoplarVCFsAnnotated/', '.filter.vcf')
 
     row = [individual.split('_')[0]]
     for snp in index:
