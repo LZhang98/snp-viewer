@@ -90,20 +90,32 @@ for f in file_list:
     # 1. Check that this line isn't a duplicate (check that the locus has been processed before)
     # 2. Check that this locus is in our index of interest
     # 3. Add its gt_type field (0, 1, 2) to our data table (while counting for testing purposes)
+
+    # UPDATE:
+    # Use call.data.GT to get 0/1, 1/1, etc directly to count minor allele
     for record in vcf_reader:
         chrom = record.CHROM
         pos = record.POS
 
         call = record.samples[0]
+
+        # print(call.data.GT)
+        gt = call.data.GT
         snp = (chrom, pos)
         if snp not in found_list:
             if snp in index:
                 found_list.append(snp)
                 num_hits += 1
-                if call.gt_type == 1:
+                # if call.gt_type == 1:
+                #     num_het += 1
+                #     data[snp][individual] = 1
+                # elif call.gt_type == 2:
+                #     num_hom_alt += 1
+                #     data[snp][individual] = 2
+                if gt == "0/1":
                     num_het += 1
                     data[snp][individual] = 1
-                elif call.gt_type == 2:
+                elif gt == "1/1":
                     num_hom_alt += 1
                     data[snp][individual] = 2
         num_lines += 1
