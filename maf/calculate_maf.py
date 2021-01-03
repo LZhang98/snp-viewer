@@ -93,6 +93,9 @@ for f in file_list:
 
     # UPDATE:
     # Use call.data.GT to get 0/1, 1/1, etc directly to count minor allele
+
+    # UPDATE 2:
+    # Get raw gt directly written into table (just to make sure counting is right)
     for record in vcf_reader:
         chrom = record.CHROM
         pos = record.POS
@@ -112,12 +115,16 @@ for f in file_list:
                 # elif call.gt_type == 2:
                 #     num_hom_alt += 1
                 #     data[snp][individual] = 2
-                if gt == "0/1":
-                    num_het += 1
-                    data[snp][individual] = 1
-                elif gt == "1/1":
-                    num_hom_alt += 1
-                    data[snp][individual] = 2
+                # if gt == "0/1":
+                #     num_het += 1
+                #     data[snp][individual] = 1
+                # elif gt == "1/1":
+                #     num_hom_alt += 1
+                #     data[snp][individual] = 2
+
+                gt_new = gt.replace("/", ".")
+                data[snp][individual] = gt_new
+                
         num_lines += 1
 
         # Make sure the code isn't slowing down over time
