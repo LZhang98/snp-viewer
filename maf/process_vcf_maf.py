@@ -1,4 +1,4 @@
-import json
+import csv
 import vcf
 
 # load index ==================================================================
