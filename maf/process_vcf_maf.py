@@ -45,6 +45,7 @@ for record in vcf_reader:
             found_list.append(snp)
             print("found", snp)
             data[snp] = record.INFO['AF']
+	    print(record.INFO['AF'])
 
     num_lines += 1 
     # Make sure the code isn't slowing down over time
