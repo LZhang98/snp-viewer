@@ -32,6 +32,7 @@ f = open(filename, 'r')
 vcf_reader = vcf.Reader(f)
 
 found_list = []
+num_lines = 0
 # Allele frequence stored in AF field of INFO
 for record in vcf_reader:
 
@@ -44,6 +45,11 @@ for record in vcf_reader:
             found_list.append(snp)
             print("found", snp)
             data[snp] = record.INFO['AF']
+
+    num_lines += 1 
+    # Make sure the code isn't slowing down over time
+    if num_lines % 10000 == 0:
+        print("read " + str(num_lines) + " lines")
 
 # process dict ===================================================================
 
