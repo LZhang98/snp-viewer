@@ -39,10 +39,11 @@ for record in vcf_reader:
     pos = record.POS
 
     snp = (chrom, pos)
-    if snp in index:
-        found_list.append(snp)
-        print("found", snp)
-        data[snp] = record.INFO['AF']
+    if snp not in found_list:
+        if snp in index:
+            found_list.append(snp)
+            print("found", snp)
+            data[snp] = record.INFO['AF']
 
 # process dict ===================================================================
 
